@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:oauth2="http://www.mulesoft.org/schema/mule/oauth2" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/oauth2 http://www.mulesoft.org/schema/mule/oauth2/current/mule-oauth2.xsd">
+    <http:listener-config name="HTTP_Listener_8081" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Oauth" host="localhost" port="8080" connectionIdleTimeout="0" doc:name="HTTP Request Configuration" basePath="/">
+        <oauth2:client-credentials-grant-type clientId="mule" clientSecret="mulesecret" tokenManager-ref="Token_Manager_Config">
+            <oauth2:token-request tokenUrl="http://localhost:8080/demo/oauth/token"/>
+        </oauth2:client-credentials-grant-type>
+    </http:request-config>
+   
+    <flow name="oauth-clientFlow">
+        <http:listener config-ref="HTTP_Listener_8081" path="/app/" doc:name="HTTP"/>
+        <http:request config-ref="HTTP_Request_Oauth" path="/demo/ping" method="GET" doc:name="HTTP"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+        <logger level="INFO" doc:name="Logger" message="#[payload]"/>
+    </flow>
+</mule>
