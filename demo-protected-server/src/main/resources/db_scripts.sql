@@ -53,7 +53,6 @@ create table if not exists users(
 insert into users (username,password,enabled) values ('admin','1234',true);
 insert into AUTHORITIES(USERNAME,AUTHORITY) values ('admin','ADMIN');
 
+
 insert into OAUTH_CLIENT_DETAILS(CLIENT_ID,CLIENT_SECRET,SCOPE,AUTHORIZED_GRANT_TYPES,ACCESS_TOKEN_VALIDITY,REFRESH_TOKEN_VALIDITY)
-values ('ac','acsecret','read,write','password,refresh_token',5000,5000);
-insert into OAUTH_CLIENT_DETAILS(CLIENT_ID,CLIENT_SECRET,SCOPE,AUTHORIZED_GRANT_TYPES,ACCESS_TOKEN_VALIDITY,REFRESH_TOKEN_VALIDITY)
-values ('web','websecret','read,write','password,refresh_token',5000,5000);
+values ('mule','mulesecret','read,write','client_credentials',5000,5000);
