@@ -31,24 +31,5 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.jdbcAuthentication().dataSource(dataSource);
 	}
 
-	/**
-	 * Resource Server. The resource server authorizes the REST urls based on
-	 * the access_token received from {@link AuthServer}
-	 *
-	 * @author brisatc186.gogoi
-	 */
-	@Configuration
-	@EnableResourceServer
-	public static class ResourceServer extends ResourceServerConfigurerAdapter {
 
-		@Override
-		public void configure(ResourceServerSecurityConfigurer resources) {
-			resources.resourceId("BRISA_SW_SHARE");
-		}
-
-		@Override
-		public void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/ping").authenticated();
-		}
-	}
 }
