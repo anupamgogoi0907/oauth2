@@ -31,5 +31,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.jdbcAuthentication().dataSource(dataSource);
 	}
 
+	@Override
+	protected void configure(HttpSecurity security) throws Exception {
+		security.csrf().disable();
+	}
 
 }
