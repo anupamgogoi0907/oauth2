@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MyController {
-    @GetMapping("/basic")
+    @GetMapping("/basic_protected")
     @ResponseBody
     public String getAuth() {
         return "I am secured by Http Basic authentication.";
     }
 
-    @GetMapping("/auth")
+    @GetMapping("/oauth_protected")
     @ResponseBody
     public String getOauth() {
         return "I am secured by Oauth.";
