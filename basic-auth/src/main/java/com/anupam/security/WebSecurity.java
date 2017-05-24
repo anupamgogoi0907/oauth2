@@ -24,8 +24,9 @@ public class WebSecurity {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.csrf().disable();
-			http.antMatcher("/oauth/authorize").authorizeRequests().anyRequest().authenticated().and().httpBasic();
+			http.authorizeRequests().antMatchers("/basic","/oauth/authorize").authenticated().and().httpBasic();
+			
+//			http.antMatcher("/oauth/authorize").authorizeRequests().anyRequest().authenticated().and().httpBasic();
 		}
 
 	}
