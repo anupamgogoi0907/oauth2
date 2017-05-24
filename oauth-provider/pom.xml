@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ac</groupId>
@@ -25,12 +26,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<copyToAppsDirectory>true</copyToAppsDirectory>
-					<inclusions>
-						<inclusion>
-							<groupId>com.mulesoft.security</groupId>
-							<artifactId>mule-module-security-oauth2-provider</artifactId>
-						</inclusion>
-					</inclusions>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -63,17 +58,13 @@
 	<!-- Mule Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>com.mulesoft.security</groupId>
-			<artifactId>mule-module-security-oauth2-provider</artifactId>
-			<version>1.6.0</version>
+			<groupId>com.ac</groupId>
+			<artifactId>mule-module-oauth2-gw</artifactId>
+			<version>3.8.4</version>
+			<scope>system</scope>
+			<systemPath>/Users/agogoi/mule-ee-3.8.4/lib/mule/mule-module-oauth2-gw-3.8.4.jar</systemPath>
 		</dependency>
-	<dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.2.2</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+	</dependencies>
 
 	<repositories>
 		<repository>
