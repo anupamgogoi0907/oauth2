@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
 	xmlns:ss="http://www.springframework.org/schema/security"
 	xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
@@ -13,21 +14,26 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
 http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
 http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
-http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
 	<http:listener-config name="HTTP_Listener_Configuration"
-		host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
+		host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
 
 	<api-platform-gw:client-store id="my-client-store"
 		doc:name="Client Store" />
 
+	<context:property-placeholder location="init.properties" />
+
 	<oauth2-provider:config name="OAuth_provider_module"
 		accessTokenEndpointPath="oauth/token" providerName="CustomProvider"
 		clientStore-ref="my-client-store" authorizationEndpointPath="oauth/authorize"
-		listenerConfig-ref="HTTP_Listener_Configuration" supportedGrantTypes="AUTHORIZATION_CODE CLIENT_CREDENTIALS"
+		listenerConfig-ref="HTTP_Listener_Configuration" supportedGrantTypes="CLIENT_CREDENTIALS"
 		doc:name="OAuth provider module">
 	</oauth2-provider:config>
 
-	<flow name="oauth-providerFlow">
+
+	<flow name="oauthProviderFlow">
 		<http:listener config-ref="HTTP_Listener_Configuration"
 			path="/app/validate/*" doc:name="HTTP" />
 		<oauth2-provider:validate config-ref="OAuth_provider_module"
