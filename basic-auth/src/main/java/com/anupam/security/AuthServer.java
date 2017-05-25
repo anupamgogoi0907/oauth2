@@ -21,7 +21,7 @@ class AuthServer extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory().withClient("mule").secret("mulesecret").authorizedGrantTypes("authorization_code").scopes("read", "write");
+        clients.inMemory().withClient("mule").secret("mulesecret").authorizedGrantTypes("authorization_code","client_credentials").scopes("read", "write");
     }
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
