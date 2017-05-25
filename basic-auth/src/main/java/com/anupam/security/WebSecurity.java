@@ -12,23 +12,21 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity(debug = true)
 public class WebSecurity {
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		manager.createUser(User.withUsername("admin").password("1234").roles("ADMIN").build());
-		return manager;
-	}
+    @Bean
+    public UserDetailsService userDetailsService() {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withUsername("admin").password("1234").roles("ADMIN").build());
+        return manager;
+    }
 
-	@Configuration
-	public class BasicAuth extends WebSecurityConfigurerAdapter {
+    @Configuration
+    public class BasicAuth extends WebSecurityConfigurerAdapter {
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/basic","/oauth/authorize").authenticated().and().httpBasic();
-			
-//			http.antMatcher("/oauth/authorize").authorizeRequests().anyRequest().authenticated().and().httpBasic();
-		}
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.requestMatchers().antMatchers("/basic", "/oauth/authorize").and().authorizeRequests().anyRequest().authenticated().and().httpBasic();
+        }
 
-	}
+    }
 
 }
