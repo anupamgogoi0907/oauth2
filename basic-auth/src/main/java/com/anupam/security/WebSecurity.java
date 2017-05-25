@@ -24,7 +24,7 @@ public class WebSecurity {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.requestMatchers().antMatchers("/basic", "/oauth/authorize").and().authorizeRequests().anyRequest().authenticated().and().httpBasic();
+            http.requestMatchers().antMatchers("/basic_protected", "/oauth/authorize").and().authorizeRequests().anyRequest().authenticated().and().httpBasic();
         }
 
     }
