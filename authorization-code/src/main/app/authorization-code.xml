@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:core="http://www.mulesoft.org/schema/mule/core"
+	xmlns:oauth2="http://www.mulesoft.org/schema/mule/oauth2"
+	xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+	xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/oauth2 http://www.mulesoft.org/schema/mule/oauth2/current/mule-oauth2.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd
+http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+
+	<http:listener-config name="HTTP_Listener_Configuration"
+		host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
+	<spring:beans>
+		<ss:authentication-manager alias="resourceOwnerAuthenticationManager">
+			<ss:authentication-provider>
+				<ss:user-service id="resourceOwnerUserService">
+					<ss:user name="agogoi" password="1234" authorities="READ_PROFILES" />
+				</ss:user-service>
+			</ss:authentication-provider>
+		</ss:authentication-manager>
+	</spring:beans>
+	<mule-ss:security-manager name="mule-ss"
+		doc:name="Spring Security Provider">
+		<mule-ss:delegate-security-provider
+			name="resourceOwnerSecurityProvider" delegate-ref="resourceOwnerAuthenticationManager" />
+	</mule-ss:security-manager>
+
+
+	<oauth2-provider:config name="Oauth2Provider"
+		providerName="SampleAPI" 
+		authorizationEndpointPath="api/authorize" accessTokenEndpointPath="api/token"
+		resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
+		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE POST_RESOURCE"
+		doc:name="OAuth provider module">
+		<oauth2-provider:clients>
+			<oauth2-provider:client clientId="mule"
+				secret="mule" type="CONFIDENTIAL" clientName="Mule Bookstore">
+				<oauth2-provider:redirect-uris>
+					<oauth2-provider:redirect-uri>http://localhost:8081/response</oauth2-provider:redirect-uri>
+				</oauth2-provider:redirect-uris>
+				<oauth2-provider:authorized-grant-types>
+					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
+				</oauth2-provider:authorized-grant-types>
+				<oauth2-provider:scopes>
+					<oauth2-provider:scope>READ_RESOURCE</oauth2-provider:scope>
+					<oauth2-provider:scope>POST_RESOURCE</oauth2-provider:scope>
+				</oauth2-provider:scopes>
+			</oauth2-provider:client>
+		</oauth2-provider:clients>
+	</oauth2-provider:config>
+
+	<flow name="authorizationCodeFlow">
+		<http:listener config-ref="HTTP_Listener_Configuration"
+			path="/*" doc:name="HTTP" />
+		<logger message="#['Request Received']" level="INFO" doc:name="Logger" />
+		<oauth2-provider:validate config-ref="Oauth2Provider"
+			doc:name="OAuth provider module" />
+	</flow>
+</mule>
