@@ -68,5 +68,6 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<logger message="#['Request Received']" level="INFO" doc:name="Logger" />
 		<oauth2-provider:validate config-ref="Oauth2Provider"
 			doc:name="OAuth provider module" />
+        <logger level="INFO" doc:name="Logger"/>
 	</flow>
 </mule>
