@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:core="http://www.mulesoft.org/schema/mule/core"
-	xmlns:oauth2="http://www.mulesoft.org/schema/mule/oauth2"
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:oauth2="http://www.mulesoft.org/schema/mule/oauth2"
 	xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
 	xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
@@ -27,7 +27,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<ss:authentication-manager alias="resourceOwnerAuthenticationManager">
 			<ss:authentication-provider>
 				<ss:user-service id="resourceOwnerUserService">
-					<ss:user name="agogoi" password="1234" authorities="READ_PROFILES" />
+					<ss:user name="agogoi" password="1234" authorities="READ_RESOURCE" />
 				</ss:user-service>
 			</ss:authentication-provider>
 		</ss:authentication-manager>
@@ -40,10 +40,9 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 
 
 	<oauth2-provider:config name="Oauth2Provider"
-		providerName="SampleAPI" 
-		authorizationEndpointPath="api/authorize" accessTokenEndpointPath="api/token"
-		resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
-		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE POST_RESOURCE"
+		providerName="SampleAPI" authorizationEndpointPath="api/authorize"
+		accessTokenEndpointPath="api/token" resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
+		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE"
 		doc:name="OAuth provider module">
 		<oauth2-provider:clients>
 			<oauth2-provider:client clientId="mule"
@@ -56,7 +55,6 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 				</oauth2-provider:authorized-grant-types>
 				<oauth2-provider:scopes>
 					<oauth2-provider:scope>READ_RESOURCE</oauth2-provider:scope>
-					<oauth2-provider:scope>POST_RESOURCE</oauth2-provider:scope>
 				</oauth2-provider:scopes>
 			</oauth2-provider:client>
 		</oauth2-provider:clients>
@@ -68,6 +66,9 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<logger message="#['Request Received']" level="INFO" doc:name="Logger" />
 		<oauth2-provider:validate config-ref="Oauth2Provider"
 			doc:name="OAuth provider module" />
-        <logger level="INFO" doc:name="Logger"/>
+		<custom-processor
+			class="com.mulesoft.module.oauth2.ValidatorResponseBuilder" doc:name="ValidatorResponseBuilder"
+			name="Custom_Processor" />
+		<logger level="INFO" doc:name="Logger" message="#[payload]"/>
 	</flow>
 </mule>
