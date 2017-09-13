@@ -27,7 +27,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<ss:authentication-manager alias="resourceOwnerAuthenticationManager">
 			<ss:authentication-provider>
 				<ss:user-service id="resourceOwnerUserService">
-					<ss:user name="agogoi" password="1234" authorities="READ_RESOURCE" />
+					<ss:user name="agogoi" password="1234" authorities="READ" />
 				</ss:user-service>
 			</ss:authentication-provider>
 		</ss:authentication-manager>
