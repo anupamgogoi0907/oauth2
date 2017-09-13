@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<mule.version>3.8.2</mule.version>
+		<mule.version>3.8.4</mule.version>
 		<mule.tools.version>1.2</mule.tools.version>
 	</properties>
 
@@ -57,18 +57,11 @@
 
 	<!-- Mule Dependencies -->
 	<dependencies>
-		<!-- <dependency>
-			<groupId>com.ac</groupId>
-			<artifactId>mule-module-oauth2-gw</artifactId>
-			<version>3.8.4</version>
-			<scope>system</scope>
-			<systemPath>/Users/agogoi/mule-ee-3.8.4/lib/mule/mule-module-oauth2-gw-3.8.4.jar</systemPath>
-		</dependency>
 		<dependency>
 			<groupId>com.mulesoft.security</groupId>
 			<artifactId>mule-module-security-oauth2-provider</artifactId>
 			<version>1.6.0</version>
-		</dependency> -->
+		</dependency>
 	</dependencies>
 
 	<repositories>

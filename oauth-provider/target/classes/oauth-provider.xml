@@ -28,14 +28,14 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 	<oauth2-provider:config name="OAuth_provider_module"
 		accessTokenEndpointPath="oauth/token" providerName="CustomProvider"
 		clientStore-ref="my-client-store" authorizationEndpointPath="oauth/authorize"
-		listenerConfig-ref="HTTP_Listener_Configuration" supportedGrantTypes="CLIENT_CREDENTIALS"
+		listenerConfig-ref="HTTP_Listener_Configuration" supportedGrantTypes="CLIENT_CREDENTIALS AUTHORIZATION_CODE"
 		doc:name="OAuth provider module">
 	</oauth2-provider:config>
 
 
 	<flow name="oauthProviderFlow">
 		<http:listener config-ref="HTTP_Listener_Configuration"
-			path="/app/validate/*" doc:name="HTTP" />
+			path="/*" doc:name="HTTP" />
 		<oauth2-provider:validate config-ref="OAuth_provider_module"
 			doc:name="OAuth provider module" />
 		<custom-processor
