@@ -27,7 +27,8 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<ss:authentication-manager alias="resourceOwnerAuthenticationManager">
 			<ss:authentication-provider>
 				<ss:user-service id="resourceOwnerUserService">
-					<ss:user name="agogoi" password="1234" authorities="READ_RESOURCE" />
+					<!-- I am the Resource Owner and I will authorize the Clients -->
+					<ss:user name="agogoi" password="1234" authorities="ADMIN" />
 				</ss:user-service>
 			</ss:authentication-provider>
 		</ss:authentication-manager>
@@ -45,6 +46,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE"
 		doc:name="OAuth provider module">
 		<oauth2-provider:clients>
+			<!-- This client has only READ permissions -->
 			<oauth2-provider:client clientId="mule"
 				secret="mule" type="CONFIDENTIAL" clientName="Mule Bookstore">
 				<oauth2-provider:redirect-uris>
@@ -69,6 +71,6 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<custom-processor
 			class="com.mulesoft.module.oauth2.ValidatorResponseBuilder" doc:name="ValidatorResponseBuilder"
 			name="Custom_Processor" />
-		<logger level="INFO" doc:name="Logger" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" message="#[payload]" />
 	</flow>
 </mule>
