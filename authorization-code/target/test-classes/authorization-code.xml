@@ -45,7 +45,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		providerName="SampleAPI" authorizationEndpointPath="api/authorize"
 		accessTokenEndpointPath="api/token" resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
 		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE WRITE_RESOURCE"
-		doc:name="OAuth provider module">
+		doc:name="OAuth provider module" supportedGrantTypes="AUTHORIZATION_CODE CLIENT_CREDENTIALS">
 		<oauth2-provider:clients>
 			<!-- This client has only READ permissions -->
 			<oauth2-provider:client clientId="reader"
@@ -55,6 +55,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 				</oauth2-provider:redirect-uris>
 				<oauth2-provider:authorized-grant-types>
 					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
+					<oauth2-provider:authorized-grant-type>CLIENT_CREDENTIALS</oauth2-provider:authorized-grant-type>
 				</oauth2-provider:authorized-grant-types>
 				<oauth2-provider:scopes>
 					<oauth2-provider:scope>READ_RESOURCE</oauth2-provider:scope>
