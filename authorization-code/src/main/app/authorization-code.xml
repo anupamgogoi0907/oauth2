@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
 	xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:oauth2="http://www.mulesoft.org/schema/mule/oauth2"
 	xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
 	xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
@@ -19,10 +19,11 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
 http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
 http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
 
 	<http:listener-config name="HTTP_Listener_Configuration"
-		host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
+		host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
 	<spring:beans>
 		<ss:authentication-manager alias="resourceOwnerAuthenticationManager">
 			<ss:authentication-provider>
@@ -50,7 +51,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 			<oauth2-provider:client clientId="reader"
 				secret="reader" type="CONFIDENTIAL" clientName="Mule Bookstore">
 				<oauth2-provider:redirect-uris>
-					<oauth2-provider:redirect-uri>http://localhost:8081/response</oauth2-provider:redirect-uri>
+					<oauth2-provider:redirect-uri>${redirect.uri}</oauth2-provider:redirect-uri>
 				</oauth2-provider:redirect-uris>
 				<oauth2-provider:authorized-grant-types>
 					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
@@ -64,7 +65,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 			<oauth2-provider:client clientId="writer"
 				secret="writer" type="CONFIDENTIAL" clientName="Mule Bookstore">
 				<oauth2-provider:redirect-uris>
-					<oauth2-provider:redirect-uri>http://localhost:8081/response</oauth2-provider:redirect-uri>
+					<oauth2-provider:redirect-uri>${redirect.uri}</oauth2-provider:redirect-uri>
 				</oauth2-provider:redirect-uris>
 				<oauth2-provider:authorized-grant-types>
 					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
@@ -75,6 +76,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 			</oauth2-provider:client>
 		</oauth2-provider:clients>
 	</oauth2-provider:config>
+    <context:property-placeholder location="init.properties"/>
 
 	<flow name="authorizationCodeFlow">
 		<http:listener config-ref="HTTP_Listener_Configuration"

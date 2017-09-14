@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
 	xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:oauth2="http://www.mulesoft.org/schema/mule/oauth2"
 	xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
 	xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
@@ -19,15 +19,17 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
 http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
 http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
 
 	<http:listener-config name="HTTP_Listener_Configuration"
-		host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
+		host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration" />
 	<spring:beans>
 		<ss:authentication-manager alias="resourceOwnerAuthenticationManager">
 			<ss:authentication-provider>
 				<ss:user-service id="resourceOwnerUserService">
-					<ss:user name="agogoi" password="1234" authorities="READ" />
+					<!-- I am the Resource Owner and I will authorize the Clients -->
+					<ss:user name="agogoi" password="1234" authorities="ADMIN" />
 				</ss:user-service>
 			</ss:authentication-provider>
 		</ss:authentication-manager>
@@ -42,13 +44,14 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 	<oauth2-provider:config name="Oauth2Provider"
 		providerName="SampleAPI" authorizationEndpointPath="api/authorize"
 		accessTokenEndpointPath="api/token" resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
-		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE"
+		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE WRITE_RESOURCE"
 		doc:name="OAuth provider module">
 		<oauth2-provider:clients>
-			<oauth2-provider:client clientId="mule"
-				secret="mule" type="CONFIDENTIAL" clientName="Mule Bookstore">
+			<!-- This client has only READ permissions -->
+			<oauth2-provider:client clientId="reader"
+				secret="reader" type="CONFIDENTIAL" clientName="Mule Bookstore">
 				<oauth2-provider:redirect-uris>
-					<oauth2-provider:redirect-uri>http://localhost:8081/response</oauth2-provider:redirect-uri>
+					<oauth2-provider:redirect-uri>${redirect.uri}</oauth2-provider:redirect-uri>
 				</oauth2-provider:redirect-uris>
 				<oauth2-provider:authorized-grant-types>
 					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
@@ -57,8 +60,23 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 					<oauth2-provider:scope>READ_RESOURCE</oauth2-provider:scope>
 				</oauth2-provider:scopes>
 			</oauth2-provider:client>
+
+			<!-- This client has only WRITE permissions -->
+			<oauth2-provider:client clientId="writer"
+				secret="writer" type="CONFIDENTIAL" clientName="Mule Bookstore">
+				<oauth2-provider:redirect-uris>
+					<oauth2-provider:redirect-uri>${redirect.uri}</oauth2-provider:redirect-uri>
+				</oauth2-provider:redirect-uris>
+				<oauth2-provider:authorized-grant-types>
+					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
+				</oauth2-provider:authorized-grant-types>
+				<oauth2-provider:scopes>
+					<oauth2-provider:scope>WRITE_RESOURCE</oauth2-provider:scope>
+				</oauth2-provider:scopes>
+			</oauth2-provider:client>
 		</oauth2-provider:clients>
 	</oauth2-provider:config>
+    <context:property-placeholder location="init.properties"/>
 
 	<flow name="authorizationCodeFlow">
 		<http:listener config-ref="HTTP_Listener_Configuration"
@@ -69,6 +87,6 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<custom-processor
 			class="com.mulesoft.module.oauth2.ValidatorResponseBuilder" doc:name="ValidatorResponseBuilder"
 			name="Custom_Processor" />
-		<logger level="INFO" doc:name="Logger" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" message="#[payload]" />
 	</flow>
 </mule>
