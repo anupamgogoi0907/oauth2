@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:request-config name="HTTP_Request_Configuration" protocol="HTTPS" host="anypoint.mulesoft.com" port="443" basePath="/" doc:name="HTTP Request Configuration"/>
+    <flow name="platform-usersFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/users/*" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	"username": p('anypoint.username'),
+  	"password": p('anypoint.password')
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Request_Configuration" path="accounts/login" method="POST" doc:name="HTTP_Login"/>
+        <set-variable variableName="accessToken" value="Bearer #[json:access_token]" doc:name="Access Token"/>
+        <http:request config-ref="HTTP_Request_Configuration" path="accounts/api/me" method="GET" doc:name="HTTP_Me">
+            <http:request-builder>
+                <http:header headerName="Authorization" value="#[flowVars.accessToken]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="HTTP_Request_Configuration" path="#['accounts/api/organizations/' + payload.user.organization.id + '/users']" method="GET" doc:name="HTTP_Users">
+            <http:request-builder>
+                <http:header headerName="Authorization" value="#[flowVars.accessToken]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-payload>
+        </dw:transform-message>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>
