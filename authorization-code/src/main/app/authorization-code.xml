@@ -43,12 +43,12 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 	<oauth2-provider:config name="Oauth2Provider"
 		providerName="SampleAPI" authorizationEndpointPath="api/authorize"
 		accessTokenEndpointPath="api/token" resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
-		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE"
+		listenerConfig-ref="HTTP_Listener_Configuration" scopes="READ_RESOURCE WRITE_RESOURCE"
 		doc:name="OAuth provider module">
 		<oauth2-provider:clients>
 			<!-- This client has only READ permissions -->
-			<oauth2-provider:client clientId="mule"
-				secret="mule" type="CONFIDENTIAL" clientName="Mule Bookstore">
+			<oauth2-provider:client clientId="reader"
+				secret="reader" type="CONFIDENTIAL" clientName="Mule Bookstore">
 				<oauth2-provider:redirect-uris>
 					<oauth2-provider:redirect-uri>http://localhost:8081/response</oauth2-provider:redirect-uri>
 				</oauth2-provider:redirect-uris>
@@ -57,6 +57,20 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 				</oauth2-provider:authorized-grant-types>
 				<oauth2-provider:scopes>
 					<oauth2-provider:scope>READ_RESOURCE</oauth2-provider:scope>
+				</oauth2-provider:scopes>
+			</oauth2-provider:client>
+
+			<!-- This client has only WRITE permissions -->
+			<oauth2-provider:client clientId="writer"
+				secret="writer" type="CONFIDENTIAL" clientName="Mule Bookstore">
+				<oauth2-provider:redirect-uris>
+					<oauth2-provider:redirect-uri>http://localhost:8081/response</oauth2-provider:redirect-uri>
+				</oauth2-provider:redirect-uris>
+				<oauth2-provider:authorized-grant-types>
+					<oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
+				</oauth2-provider:authorized-grant-types>
+				<oauth2-provider:scopes>
+					<oauth2-provider:scope>WRITE_RESOURCE</oauth2-provider:scope>
 				</oauth2-provider:scopes>
 			</oauth2-provider:client>
 		</oauth2-provider:clients>
